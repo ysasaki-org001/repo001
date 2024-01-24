@@ -1,4 +1,4 @@
-name: "infra preview & deploy222"
+name: "infra preview & deployyyyyyyyyyyyyyyyyyyyyyy"
 
 on:
   push:
@@ -44,3 +44,6 @@ jobs:
       - name: Terraform init
         run: |
           terraform init -no-color
+      - name: Terraform validate
+        run: |
+          terraform validate -no-color
