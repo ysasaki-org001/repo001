@@ -32,7 +32,7 @@ jobs:
       - name: Cehckout repository
         uses: actions/checkout@v3
       - name: Setup terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
       - name: Terraform format
