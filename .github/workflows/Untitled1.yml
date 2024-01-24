@@ -1,4 +1,4 @@
-name: "infra preview & deploy#2"
+name: "infra preview & deploy"
 
 on:
   push:
@@ -32,3 +32,6 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.TF_VERSION }}
+      - name: Terraform format
+        run: |
+          terraform fmt -check
