@@ -68,7 +68,7 @@ jobs:
             -var 'password=${{ secrets.MYSQL_PASSWORD }}' \
             -input=false \
             -no-color \
-            -detailed-exitcode | grep "0 to add" |  grep "0 to destroy"
+            -detailed-exitcode  | grep "No changes" 
           if [ echo $? == 1]
           then
             echo "Change Happen !!!"
