@@ -1,0 +1,26 @@
+name: "infra preview & deploy"
+
+on:
+  push:
+    branches:
+      - main
+    paths: # いずれかの変更が含まれる際はトリガーとなる
+      - 10_infra/**
+      - .github/workflows/**
+  workflow_dispatch: #ワークフローを手動で実行できるイベント
+
+permissions: #githubからterraformeでAWSに設定変更かけるには必要らしい
+  id-token: write # これを指定することでIDトークンの取得に必要な情報を環境変数に設定してもらえます。
+  contents: read # アクションによるコミットの一覧表示を許可 writeにするとrepoにpushできる？意味わからん
+
+jobs:
+  preview:
+    name: Preview
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Hello World"
+          echo "${{ env.MESSAGE }}"
+          echo "${{ github.token }}"
+        env:
+          MESSAGE: "Yuto Sasaki!!!!!!!!!!!!"
