@@ -110,7 +110,7 @@ jobs:
   deploy:
     name: Deploy
     needs: preview
-    if: needs.preview.outputs.TF_PLAN_EXITCODE == 2
+    if: needs.preview.outputs.TF_PLAN_EXITCODE == 2 # planで変更がる時だけ動く
     environment: production # 承認フロー
     runs-on: ubuntu-latest
     steps:
@@ -143,7 +143,7 @@ jobs:
             -no-color \
             -auto-approve
       - name: Slack Notify # 上のapplyが成功しても失敗してもapply終了の通知は欲しい
-        if: always()
+        if: always()       # あくまで上の処理の判定
         uses: slackapi/slack-github-action@v1.22.0
         with:
           channel-id: C06G3EAA74Z # "${{ secrets.SLACK_CHANNEL_ID }}"
