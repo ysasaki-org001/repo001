@@ -14,27 +14,27 @@ jobs:
           channel-id: "C06G3EAA74Z" ##########################################################
           payload: |
             {
-            "attachments": [
-              {
-                "blocks": [
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "はろーghost :ghost:"
+              "attachments": [
+                {
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "はろーghost :ghost:"
+                      }
+                    },
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "headerだよ",
+                        "emoji": true
+                      }
                     }
-                  },
-                  {
-                    "type": "header",
-                    "text": {
-                      "type": "plain_text",
-                      "text": "headerだよ",
-                      "emoji": true
-                    }
-                  }
-                ]
-              }
-            ]
+                  ]
+                }
+              ]
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
