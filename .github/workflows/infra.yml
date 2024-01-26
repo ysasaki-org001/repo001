@@ -51,7 +51,6 @@ jobs:
       - name: Terraform validate
         run: |
           terraform validate -no-color
-
       - name: Terraform plan
         continue-on-error: true # exitでエラーにするけど止めないで後続の処理を継続
         id: plan # planの結果をdeployに渡したい狙い
@@ -64,7 +63,6 @@ jobs:
             -input=false \
             -no-color \
             -detailed-exitcode
-
           terraform plan \
             -var 'project=${{ env.TF_PROJECT }}' \
             -var 'environment=${{ env.TF_ENVIRONMENT }}' \
@@ -72,13 +70,12 @@ jobs:
             -var 'password=${{ secrets.MYSQL_PASSWORD }}' \
             -input=false \
             -no-color \
-            -detailed-exitcode  | grep "No changes" 
+            -detailed-exitcode  | grep "No changes"
           if [ echo $? == 1]
           then
             echo "Change Happen !!!"
             exit 2
           fi
-
       - name: Slack Notify
         if: steps.plan.outputs.exitcode == 2
         uses: slackapi/slack-github-action@v1.22.0
@@ -110,7 +107,6 @@ jobs:
             }
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
   deploy:
     name: Deploy
     needs: preview
@@ -135,7 +131,6 @@ jobs:
       - name: Terraform init
         run: |
           terraform init -no-color
-          
       - name: Terraform apply
         id: apply
         run: |
@@ -147,35 +142,34 @@ jobs:
             -input=false \
             -no-color \
             -auto-approve
-  
-     - name: Slack Notify # 上のapplyが成功しても失敗してもapply終了の通知は欲しい
-        if: always()
-        uses: slackapi/slack-github-action@v1.22.0
-        with:
-          channel-id: C06G3EAA74Z # "${{ secrets.SLACK_CHANNEL_ID }}"
-          payload: |
-            {
-              "attachments": [
-                {
-                  "blocks": [
-                    {
-                      "type": "header",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "Runner Finished: ${{ steps.apply.outcome }}",
-                        "emoji": true
+      - name: Slack Notify # 上のapplyが成功しても失敗してもapply終了の通知は欲しい
+          if: always()
+          uses: slackapi/slack-github-action@v1.22.0
+          with:
+            channel-id: C06G3EAA74Z # "${{ secrets.SLACK_CHANNEL_ID }}"
+            payload: |
+              {
+                "attachments": [
+                  {
+                    "blocks": [
+                      {
+                        "type": "header",
+                        "text": {
+                          "type": "plain_text",
+                          "text": "Runner Finished: ${{ steps.apply.outcome }}",
+                          "emoji": true
+                        }
+                      },
+                      {
+                        "type": "section",
+                        "text": {
+                          "type": "mrkdwn",
+                          "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                        }
                       }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                    ]
+                  }
+                ]
+              }
+          env:
+            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
