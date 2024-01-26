@@ -51,11 +51,10 @@ jobs:
       - name: Terraform validate
         run: |
           terraform validate -no-color
-  
-  
+
       - name: Terraform plan
         continue-on-error: true # exitでエラーにするけど止めないで後続の処理を継続
-        id: plan                # planの結果をdeployに渡したい狙い
+        id: plan # planの結果をdeployに渡したい狙い
         run: |
           terraform plan \
             -var 'project=${{ env.TF_PROJECT }}' \
@@ -65,7 +64,7 @@ jobs:
             -input=false \
             -no-color \
             -detailed-exitcode
-          
+
           terraform plan \
             -var 'project=${{ env.TF_PROJECT }}' \
             -var 'environment=${{ env.TF_ENVIRONMENT }}' \
@@ -79,8 +78,7 @@ jobs:
             echo "Change Happen !!!"
             exit 2
           fi
-  
-  
+
       - name: Slack Notify
         if: steps.plan.outputs.exitcode == 2
         uses: slackapi/slack-github-action@v1.22.0
@@ -113,5 +111,27 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-
-
+  deploy:
+    name: Deploy
+    needs: preview
+    if: needs.preview.outputs.TF_PLAN_EXITCODE == 2
+    environment: production # 承認フロー
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cehckout repository
+        uses: actions/checkout@v3
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      - name: Terraform format
+        run: |
+          terraform fmt -check
+      - name: Configure AWS Credential
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+      - name: Terraform init
+        run: |
+          terraform init -no-color
