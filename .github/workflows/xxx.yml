@@ -17,7 +17,7 @@ jobs:
   preview:
     name: Preview
     runs-on: ubuntu-latest
-    environment: production
+    #environment: production
     steps:
       - run: |
           echo "Hello World"
