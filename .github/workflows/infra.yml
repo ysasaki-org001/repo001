@@ -28,6 +28,8 @@ jobs:
   preview:
     name: Preview
     runs-on: ubuntu-latest
+    outputs:
+      TF_PLAN_EXITCODE: ${{ steps.plan.outputs.exitcode }} # planの結果をdeployに渡したい狙い
     steps:
       - name: Cehckout repository
         uses: actions/checkout@v3
@@ -49,8 +51,11 @@ jobs:
       - name: Terraform validate
         run: |
           terraform validate -no-color
+  
+  
       - name: Terraform plan
-        id: plan
+        continue-on-error: true # exitでエラーにするけど止めないで後続の処理を継続
+        id: plan                # planの結果をdeployに渡したい狙い
         run: |
           terraform plan \
             -var 'project=${{ env.TF_PROJECT }}' \
@@ -72,5 +77,41 @@ jobs:
           if [ echo $? == 1]
           then
             echo "Change Happen !!!"
-            exit 1
+            exit 2
           fi
+  
+  
+      - name: Slack Notify
+        if: steps.plan.outputs.exitcode == 2
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          channel-id: "${{ secrets.SLACK_CHANNEL_ID }}"
+          payload: |
+            {
+              "attachments": [
+                {
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Request for approve",
+                        "emoji": true
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+
+
