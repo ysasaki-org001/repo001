@@ -28,7 +28,7 @@ jobs:
                       "type": "header",
                       "text": {
                         "type": "plain_text",
-                        "text": "headerだよ",
+                        "text": "ysasaki-org001/repo001のワークフロー実行",
                         "emoji": true
                       }
                     }
