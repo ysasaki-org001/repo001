@@ -143,33 +143,33 @@ jobs:
             -no-color \
             -auto-approve
       - name: Slack Notify # 上のapplyが成功しても失敗してもapply終了の通知は欲しい
-          if: always()
-          uses: slackapi/slack-github-action@v1.22.0
-          with:
-            channel-id: C06G3EAA74Z # "${{ secrets.SLACK_CHANNEL_ID }}"
-            payload: |
-              {
-                "attachments": [
-                  {
-                    "blocks": [
-                      {
-                        "type": "header",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "Runner Finished: ${{ steps.apply.outcome }}",
-                          "emoji": true
-                        }
-                      },
-                      {
-                        "type": "section",
-                        "text": {
-                          "type": "mrkdwn",
-                          "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                        }
+        if: always()
+        uses: slackapi/slack-github-action@v1.22.0
+        with:
+          channel-id: C06G3EAA74Z # "${{ secrets.SLACK_CHANNEL_ID }}"
+          payload: |
+            {
+              "attachments": [
+                {
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "Runner Finished: ${{ steps.apply.outcome }}",
+                        "emoji": true
                       }
-                    ]
-                  }
-                ]
-              }
-          env:
-            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
