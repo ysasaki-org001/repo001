@@ -63,6 +63,7 @@ resource "aws_iam_role" "ecs_task_exec_iam_role" {
     Project = var.project
     Env     = var.environment
     Message = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    CTC     = "ITS"
   }
 }
 
